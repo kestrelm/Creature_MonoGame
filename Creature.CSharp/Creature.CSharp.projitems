@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>0449ae5d-aa48-4454-818e-f7bcabe40de3</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Creature.CSharp</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)CreatureFlatDataReader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)CreatureModule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\anchorPointData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\anchorPointsHolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animation.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationBone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationBonesList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationBonesTimeSample.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationClip.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationMeshList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationMeshOpacity.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationMeshOpacityList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationMeshOpacityTimeSample.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationMeshTimeSample.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationUVSwap.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationUVSwapList.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\animationUVSwapTimeSample.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\ByteBuffer.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\FlatBufferBuilder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\FlatBufferConstants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\mesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\meshRegion.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\meshRegionBone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\Offset.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\rootData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\skeleton.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\skeletonBone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\Struct.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\Table.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\uvSwapItemData.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\uvSwapItemHolder.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)FlatBuffers\uvSwapItemMesh.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MeshBone.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MiniJSON.cs" />
+  </ItemGroup>
+</Project>
