@@ -38,7 +38,6 @@ using System.IO;
 using System.Collections.Generic;
 using MeshBoneUtil;
 using XnaGeometry = Microsoft.Xna.Framework;
-using JsonFx;
 using System.Linq;
 
 namespace CreatureModule
