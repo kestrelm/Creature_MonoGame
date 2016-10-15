@@ -22,10 +22,10 @@ namespace CreatureRenderer
 		public BasicEffect basicEffect;
 		public CreatureManager creature_manager;
 
-        public Matrix world = Matrix.Identity; // Matrix.CreateTranslation(0.5F, 0.5F, 0);
+        public Matrix world = Matrix.Identity;
         public Matrix view = Matrix.CreateLookAt(new Vector3(0, 0, 3), new Vector3(0, 0, 0), new Vector3(0, 1, 0));
-        public Matrix projection;// Matrix.CreatePerspectiveFieldOfView(MathHelper.ToRadians(45), 800f / 480f, 0.01f, 100f);
-        public Matrix spriteBatchConversionMatrix;
+        public Matrix projection;
+
         private GraphicsDevice device;
 
         public Renderer(GraphicsDevice device,
@@ -33,17 +33,10 @@ namespace CreatureRenderer
 			ref Texture2D texture_in)
 		{
 
-          //  projection = Matrix.CreateOrthographic(40 * device.Viewport.AspectRatio, 40, 0, 1);
-            //Matrix.CreateOrthographicOffCenter(0, 256, 240, 0, -10, 10);
-
-          
-
             creature_manager = manager_in;
 			renderTexture = texture_in;
 
 			CreateRenderingData(device);
-            
-            spriteBatchConversionMatrix = Matrix.CreateScale(1, 1, 1) * Matrix.CreateTranslation(device.Viewport.Width / 2, device.Viewport.Height / 2, 0F) ;
 
             this.device = device;
         }
@@ -54,34 +47,6 @@ namespace CreatureRenderer
             var screenPositon = device.Viewport.Project(v3, projection, view, world);
             return new Vector2(screenPositon.X, screenPositon.Y);
         }
-
-        //Vector2 ToScreenCoordinates(Vector2 worldCoords)
-        //{
-        //    var screenPositon = graphics.GraphicsDevice.Viewport.Project(new Vector3(worldCoords, 0),
-        //            Projection, View, Matrix.Identity);
-        //    return new Vector2(screenPositon.X, screenPositon.Y);
-        //}
-
-
-        /*
-	void Start () {
-		Reset ();
-		
-		// Testing
-		string filepath = "/Users/jychong/Projects/EngineAppMedia/Test/default.json";
-		Dictionary<string, object> load_data = CreatureModule.Utils.LoadCreatureJSONData (filepath);
-		
-		CreatureModule.Creature new_creature = new CreatureModule.Creature(ref load_data);
-		CreatureModule.CreatureManager new_manager = new CreatureModule.CreatureManager (new_creature);
-		new_manager.CreateAnimation (ref load_data, "default");
-		//new_manager.CreateAnimation (ref load_data, "second");
-
-		new_manager.SetActiveAnimationName ("default");
-		new_manager.SetIsPlaying (true);
-		
-		creature_manager = new_manager;
-	}
-	*/
 
 
         private void CreateRenderingData(GraphicsDevice device)
@@ -161,8 +126,8 @@ namespace CreatureRenderer
 				pass.Apply ();
 				device.DrawIndexedPrimitives (PrimitiveType.TriangleList, 
 					0, 
-					0,
-					renderData.Length,
+					//0,
+					//renderData.Length,
 					0, 
 					creature_manager.target_creature.total_num_indices / 3);
 
