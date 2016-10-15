@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Creature.Monogame", "Creature.Monogame\Creature.Monogame.shproj", "{488BB149-FC52-4CAD-8FC4-F8B44C815B4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MonoGameTest", "MonoGameTest\MonoGameTest\MonoGameTest.csproj", "{40056D4C-5FA5-4C55-965C-712DAE1FD064}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Creature.CSharp", "Creature.CSharp\Creature.CSharp.shproj", "{0449AE5D-AA48-4454-818E-F7BCABE40DE3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Monogame_Example", "Monogame_Example\Monogame_Example.csproj", "{38B63796-9341-4FE8-B41C-631A8B6C18E3}"
+EndProject
+Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Creature.CSharp\Creature.CSharp.projitems*{0449ae5d-aa48-4454-818e-f7bcabe40de3}*SharedItemsImports = 13
+		Creature.CSharp\Creature.CSharp.projitems*{38b63796-9341-4fe8-b41c-631a8b6c18e3}*SharedItemsImports = 4
+		Creature.Monogame\Creature.Monogame.projitems*{38b63796-9341-4fe8-b41c-631a8b6c18e3}*SharedItemsImports = 4
+		Creature.Monogame\Creature.Monogame.projitems*{488bb149-fc52-4cad-8fc4-f8b44c815b4e}*SharedItemsImports = 13
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40056D4C-5FA5-4C55-965C-712DAE1FD064}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{40056D4C-5FA5-4C55-965C-712DAE1FD064}.Debug|x86.ActiveCfg = Debug|x86
+		{40056D4C-5FA5-4C55-965C-712DAE1FD064}.Debug|x86.Build.0 = Debug|x86
+		{40056D4C-5FA5-4C55-965C-712DAE1FD064}.Release|Any CPU.ActiveCfg = Release|x86
+		{40056D4C-5FA5-4C55-965C-712DAE1FD064}.Release|x86.ActiveCfg = Release|x86
+		{40056D4C-5FA5-4C55-965C-712DAE1FD064}.Release|x86.Build.0 = Release|x86
+		{38B63796-9341-4FE8-B41C-631A8B6C18E3}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{38B63796-9341-4FE8-B41C-631A8B6C18E3}.Debug|x86.ActiveCfg = Debug|x86
+		{38B63796-9341-4FE8-B41C-631A8B6C18E3}.Debug|x86.Build.0 = Debug|x86
+		{38B63796-9341-4FE8-B41C-631A8B6C18E3}.Release|Any CPU.ActiveCfg = Release|x86
+		{38B63796-9341-4FE8-B41C-631A8B6C18E3}.Release|x86.ActiveCfg = Release|x86
+		{38B63796-9341-4FE8-B41C-631A8B6C18E3}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
