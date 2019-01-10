@@ -610,43 +610,101 @@ namespace CreatureModule
 			return ret_times;
 		}
 
-		static public void FillBoneCache(Dictionary<string, object> json_obj,
+        static public XnaGeometry.Vector4 ptInterp(XnaGeometry.Vector4 src_pt, XnaGeometry.Vector4 target_pt, float fraction)
+        {
+            return ((1.0f - fraction) * src_pt) + (fraction * target_pt);
+        }
+
+        static public List<XnaGeometry.Vector2> ptsInterp(
+            List<XnaGeometry.Vector2> src_pts,
+            List<XnaGeometry.Vector2> target_pts,
+            float fraction)
+        {
+            List<XnaGeometry.Vector2> ret_pts = new List<XnaGeometry.Vector2>();
+            for (var i = 0; i < src_pts.Count; i++)
+            {
+                ret_pts.Add(((1.0f - fraction) * src_pts[i]) + (fraction * target_pts[i]));
+            }
+
+            return ret_pts;
+        }
+        static public float scalarInterp(float src_val, float target_val, float fraction)
+        {
+            return ((1.0f - fraction) * src_val) + (fraction * target_val);
+        }
+
+        static public XnaGeometry.Vector4 vec4Interp(XnaGeometry.Vector4 src_vec, XnaGeometry.Vector4 target_vec, float fraction)
+        {
+            return ((1.0f - fraction) * src_vec) + (fraction * target_vec);
+        }
+
+        static public void FillBoneCache(Dictionary<string, object> json_obj,
 		                          		 string key,
 		                          		 int start_time,
 		                          		 int end_time,
 		                          		 ref MeshBoneCacheManager cache_manager)
 		{
-			Dictionary<string, object> base_obj = (Dictionary<string, object>)json_obj[key];
+            Dictionary<string, object> base_obj = (Dictionary<string, object>)json_obj[key];
 
-			cache_manager.init(start_time, end_time);
-			
-			foreach (KeyValuePair<string, object> cur_node in base_obj)
-			{
-				int cur_time = Convert.ToInt32(cur_node.Key);
-				List<MeshBoneCache> cache_list = new List<MeshBoneCache>();
+            cache_manager.init(start_time, end_time);
 
-				Dictionary<string, object> node_dict = (Dictionary<string, object>)cur_node.Value;
-				foreach (KeyValuePair<string, object> bone_node in node_dict)
-				{
-					string cur_name = bone_node.Key;
-					Dictionary<string, object> bone_dict = (Dictionary<string, object>)bone_node.Value;
+            int prev_time = start_time;
+            foreach (KeyValuePair<string, object> cur_node in base_obj)
+            {
+                int cur_time = Convert.ToInt32(cur_node.Key);
+                List<MeshBoneCache> cache_list = new List<MeshBoneCache>();
 
-					XnaGeometry.Vector4 cur_start_pt = Utils.ReadVector4JSON(bone_dict, "start_pt"); //ReadJSONVec4_2(*bone_node, "start_pt");
-					XnaGeometry.Vector4 cur_end_pt = Utils.ReadVector4JSON(bone_dict, "end_pt"); //ReadJSONVec4_2(*bone_node, "end_pt");
-					
-					MeshBoneCache cache_data = new MeshBoneCache(cur_name);
-					cache_data.setWorldStartPt(cur_start_pt);
-					cache_data.setWorldEndPt(cur_end_pt);
-					
-					cache_list.Add(cache_data);
-				}
-				
-				int set_index = cache_manager.getIndexByTime(cur_time);
-				cache_manager.bone_cache_table[set_index] = cache_list;
-			}
-			
-			cache_manager.makeAllReady();
-		}
+                Dictionary<string, object> node_dict = (Dictionary<string, object>)cur_node.Value;
+                foreach (KeyValuePair<string, object> bone_node in node_dict)
+                {
+                    string cur_name = bone_node.Key;
+                    Dictionary<string, object> bone_dict = (Dictionary<string, object>)bone_node.Value;
+
+                    XnaGeometry.Vector4 cur_start_pt = Utils.ReadVector4JSON(bone_dict, "start_pt"); //ReadJSONVec4_2(*bone_node, "start_pt");
+                    XnaGeometry.Vector4 cur_end_pt = Utils.ReadVector4JSON(bone_dict, "end_pt"); //ReadJSONVec4_2(*bone_node, "end_pt");
+
+                    MeshBoneCache cache_data = new MeshBoneCache(cur_name);
+                    cache_data.setWorldStartPt(cur_start_pt);
+                    cache_data.setWorldEndPt(cur_end_pt);
+
+                    cache_list.Add(cache_data);
+                }
+
+                int set_index = cache_manager.getIndexByTime(cur_time);
+                cache_manager.bone_cache_table[set_index] = cache_list;
+
+                var gap_diff = cur_time - prev_time;
+                if (gap_diff > 1)
+                {
+                    // Gap Step
+                    var prev_index = cache_manager.getIndexByTime(prev_time);
+                    for (int j = 1; j < gap_diff; j++)
+                    {
+                        var gap_fraction = (float)j / (float)gap_diff;
+                        List<MeshBoneCache> gap_cache_list = new List<MeshBoneCache>();
+
+                        for (int k = 0; k < cache_list.Count; k++)
+                        {
+                            var cur_data = cache_manager.bone_cache_table[set_index][k];
+                            var prev_data = cache_manager.bone_cache_table[prev_index][k];
+                            MeshBoneCache gap_cache_data = new MeshBoneCache(cur_data.getKey());
+                            gap_cache_data.setWorldStartPt(
+                                ptInterp(prev_data.getWorldStartPt(), cur_data.getWorldStartPt(), gap_fraction));
+                            gap_cache_data.setWorldEndPt(
+                                ptInterp(prev_data.getWorldEndPt(), cur_data.getWorldEndPt(), gap_fraction));
+
+                            gap_cache_list.Add(gap_cache_data);
+                        }
+
+                        cache_manager.bone_cache_table[prev_index + j] = gap_cache_list;
+                    }
+                }
+
+                prev_time = cur_time;
+            }
+
+            cache_manager.makeAllReady();
+        }
 
 		public static void FillDeformationCache(Dictionary<string, object> json_obj,
 		                                 		string key,
@@ -654,48 +712,86 @@ namespace CreatureModule
 		                                 		int end_time,
 		                                 		ref MeshDisplacementCacheManager cache_manager)
 		{
-			Dictionary<string, object> base_obj = (Dictionary<string, object>)json_obj[key];
-			
-			cache_manager.init(start_time, end_time);
+            Dictionary<string, object> base_obj = (Dictionary<string, object>)json_obj[key];
 
-			foreach (KeyValuePair<string, object> cur_node in base_obj)
-			{
-				int cur_time = Convert.ToInt32(cur_node.Key);
+            cache_manager.init(start_time, end_time);
 
-				List<MeshDisplacementCache> cache_list = new List<MeshDisplacementCache>();
-				
-				Dictionary<string, object> node_dict = (Dictionary<string, object>)cur_node.Value;
-				foreach (KeyValuePair<string, object> mesh_node in node_dict)
-				{
-					string cur_name = mesh_node.Key;
-					Dictionary<string, object> mesh_dict = (Dictionary<string, object>)mesh_node.Value;
+            int prev_time = start_time;
+            foreach (KeyValuePair<string, object> cur_node in base_obj)
+            {
+                int cur_time = Convert.ToInt32(cur_node.Key);
 
-					MeshDisplacementCache cache_data = new MeshDisplacementCache(cur_name);
-					
-					bool use_local_displacement = Utils.ReadBoolJSON(mesh_dict, "use_local_displacements"); //GetJSONNodeFromKey(*mesh_node, "use_local_displacements")->value.toBool();
-					bool use_post_displacement = Utils.ReadBoolJSON(mesh_dict, "use_post_displacements"); //GetJSONNodeFromKey(*mesh_node, "use_post_displacements")->value.toBool();
-					
-					if(use_local_displacement) {
-						List<XnaGeometry.Vector2> read_pts = Utils.ReadPointsArray2DJSON(mesh_dict,
-						                                                          "local_displacements"); //ReadJSONPoints2DVector(*mesh_node, "local_displacements");
-						cache_data.setLocalDisplacements(read_pts);
-					}
-					
-					if(use_post_displacement) {
-						List<XnaGeometry.Vector2> read_pts = Utils.ReadPointsArray2DJSON(mesh_dict,
-						                                                          "post_displacements"); //ReadJSONPoints2DVector(*mesh_node, "post_displacements");
-						cache_data.setPostDisplacements(read_pts);
-					}
-					
-					cache_list.Add(cache_data);
-				}
-				
-				int set_index = cache_manager.getIndexByTime(cur_time);
-				cache_manager.displacement_cache_table[set_index] = cache_list;
-			}
-			
-			cache_manager.makeAllReady();
-		}
+                List<MeshDisplacementCache> cache_list = new List<MeshDisplacementCache>();
+
+                Dictionary<string, object> node_dict = (Dictionary<string, object>)cur_node.Value;
+                foreach (KeyValuePair<string, object> mesh_node in node_dict)
+                {
+                    string cur_name = mesh_node.Key;
+                    Dictionary<string, object> mesh_dict = (Dictionary<string, object>)mesh_node.Value;
+
+                    MeshDisplacementCache cache_data = new MeshDisplacementCache(cur_name);
+
+                    bool use_local_displacement = Utils.ReadBoolJSON(mesh_dict, "use_local_displacements"); //GetJSONNodeFromKey(*mesh_node, "use_local_displacements")->value.toBool();
+                    bool use_post_displacement = Utils.ReadBoolJSON(mesh_dict, "use_post_displacements"); //GetJSONNodeFromKey(*mesh_node, "use_post_displacements")->value.toBool();
+
+                    if (use_local_displacement)
+                    {
+                        List<XnaGeometry.Vector2> read_pts = Utils.ReadPointsArray2DJSON(mesh_dict,
+                                                                                  "local_displacements"); //ReadJSONPoints2DVector(*mesh_node, "local_displacements");
+                        cache_data.setLocalDisplacements(read_pts);
+                    }
+
+                    if (use_post_displacement)
+                    {
+                        List<XnaGeometry.Vector2> read_pts = Utils.ReadPointsArray2DJSON(mesh_dict,
+                                                                                  "post_displacements"); //ReadJSONPoints2DVector(*mesh_node, "post_displacements");
+                        cache_data.setPostDisplacements(read_pts);
+                    }
+
+                    cache_list.Add(cache_data);
+                }
+
+                int set_index = cache_manager.getIndexByTime(cur_time);
+                cache_manager.displacement_cache_table[set_index] = cache_list;
+
+                var gap_diff = cur_time - prev_time;
+                if (gap_diff > 1)
+                {
+                    // Gap Step
+                    var prev_index = cache_manager.getIndexByTime(prev_time);
+                    for (int j = 1; j < gap_diff; j++)
+                    {
+                        var gap_fraction = (float)j / (float)gap_diff;
+                        List<MeshDisplacementCache> gap_cache_list = new List<MeshDisplacementCache>();
+
+                        for (int k = 0; k < cache_list.Count; k++)
+                        {
+                            var cur_data = cache_manager.displacement_cache_table[set_index][k];
+                            var prev_data = cache_manager.displacement_cache_table[prev_index][k];
+                            MeshDisplacementCache gap_cache_data = new MeshDisplacementCache(cur_data.getKey());
+                            if (cur_data.getLocalDisplacements().Count > 0)
+                            {
+                                gap_cache_data.setLocalDisplacements(
+                                    ptsInterp(prev_data.getLocalDisplacements(), cur_data.getLocalDisplacements(), gap_fraction));
+                            }
+                            else
+                            {
+                                gap_cache_data.setPostDisplacements(
+                                    ptsInterp(prev_data.getPostDisplacements(), cur_data.getPostDisplacements(), gap_fraction));
+                            }
+
+                            gap_cache_list.Add(gap_cache_data);
+                        }
+
+                        cache_manager.displacement_cache_table[prev_index + j] = gap_cache_list;
+                    }
+                }
+
+                prev_time = cur_time;
+            }
+
+            cache_manager.makeAllReady();
+        }
 
 		public static void FillUVSwapCache(Dictionary<string, object> json_obj,
 		                                   string key,
