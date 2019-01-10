@@ -215,3 +215,7 @@ pip-log.txt
 
 #Mr Developer
 .mr.developer.cfg
+*.lock
+.vs/Creature.Monogame/v15/Server/sqlite3/storage.ide
+*.ide-shm
+.vs/Creature.Monogame/v15/Server/sqlite3/storage.ide-wal
